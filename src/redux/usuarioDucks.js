@@ -21,7 +21,7 @@ export default function usuarioReducer (state = dataInicial, action) {
         case USUARIO_ERROR:
             return {...dataInicial};
         case USUARIO_EXITO:
-            return {...state, loading : false}
+            return {...state, loading : false, user : action.payload}
         default:
             return {...state};
     }
@@ -38,12 +38,21 @@ export const ingresoUsuarioAccion = () => async(dispatch) => {
         // Acceso con Google
         const provider = new firebase.auth.GoogleAuthProvider();
         const res = await auth.signInWithPopup(provider);
-        console.log(res);
 
         dispatch({
             type : USUARIO_EXITO,
-            payload : res
+            payload : {
+                uid : res.user.uid,
+                email : res.user.email
+            }
         })
+
+        // Guardamos en Local Storage
+        localStorage.setItem('usuario',JSON.stringify({
+            uid : res.user.uid,
+            email : res.user.email
+        }));
+        
     } catch (error) {
         console.log(error);
         dispatch({
