@@ -1,4 +1,9 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## React JS + Redux
+
+Redux: Fundamentos y primeros pasos con Ducks <br />
+Redux: Creación de proyecto Pokemon API + LocalStorage <br />
+Login con cuentas de Google <br />
+Rutas protegidas con LocalStorage & Firebase Auth
 
 ## Available Scripts
 
