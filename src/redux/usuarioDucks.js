@@ -22,13 +22,9 @@ export default function usuarioReducer (state = dataInicial, action) {
         case USUARIO_ERROR:
             return {...dataInicial};
         case USUARIO_EXITO:
-<<<<<<< HEAD
             return {...state, loading : false, user : action.payload, activo: true};
         case CERRAR_SESION:
             return{...dataInicial};
-=======
-            return {...state, loading : false, user : action.payload}
->>>>>>> 147aaf0e536b32a7af35d39c1f8bde4866f08f8a
         default:
             return {...state};
     }
@@ -59,11 +55,6 @@ export const ingresoUsuarioAccion = () => async(dispatch) => {
             uid : res.user.uid,
             email : res.user.email
         }));
-<<<<<<< HEAD
-
-=======
-        
->>>>>>> 147aaf0e536b32a7af35d39c1f8bde4866f08f8a
     } catch (error) {
         console.log(error);
         dispatch({
