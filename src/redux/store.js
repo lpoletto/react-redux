@@ -8,7 +8,7 @@ import {createStore, combineReducers, compose, applyMiddleware} from 'redux';
 import thunk from 'redux-thunk';
 
 import pokeReducer from './pokeDucks';
-import usuarioReducer from './usuarioDucks';
+import usuarioReducer, {leerUsuarioActivoAccion} from './usuarioDucks';
 
 
 const rootReducer = combineReducers({
@@ -21,5 +21,7 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 export default function generateStore(){
     const store = createStore( rootReducer, composeEnhancers( applyMiddleware(thunk) ) );
+    // Para no perder el usuario logueado
+    leerUsuarioActivoAccion()(store.dispatch)
     return store; 
 };
