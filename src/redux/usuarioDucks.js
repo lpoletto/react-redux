@@ -1,4 +1,4 @@
-import {auth, firebase} from '../firebase';
+import {auth, firebase, db} from '../firebase';
 
 
 // data incial
@@ -42,19 +42,43 @@ export const ingresoUsuarioAccion = () => async(dispatch) => {
         const provider = new firebase.auth.GoogleAuthProvider();
         const res = await auth.signInWithPopup(provider);
 
-        dispatch({
-            type : USUARIO_EXITO,
-            payload : {
-                uid : res.user.uid,
-                email : res.user.email
-            }
-        })
-
-        // Guardamos en Local Storage
-        localStorage.setItem('usuario',JSON.stringify({
+        // Info que viene de Google
+        // Creamos el objeto usuario 
+        const usuario = {
             uid : res.user.uid,
-            email : res.user.email
-        }));
+            displayName : res.user.displayName,
+            email : res.user.email,
+            photoURL : res.user.photoURL
+        }
+
+        // Cuando el usuario de logue por 2da vez
+        // Preguntamos si existe en firestore
+        const usuarioDB = await db.collection('usuarios').doc(usuario.email).get();
+
+        if(usuarioDB.exists){
+            // Cuando existe el usuario en Firestore
+            dispatch({
+                type : USUARIO_EXITO,
+                payload : usuarioDB.data() //usuarioDB.data() --> el data() accede al objeto
+            })
+    
+            // Guardamos en Local Storage
+            localStorage.setItem('usuario',JSON.stringify(usuarioDB.data()));
+
+        }else{
+            //No existe el usuario
+            // Guardamos el usuario den la coleccion usuarios de Firestore
+            await db.collection('usuarios').doc(usuario.email).set(usuario);
+            
+            dispatch({
+                type : USUARIO_EXITO,
+                payload : usuario
+            })
+    
+            // Guardamos en Local Storage
+            localStorage.setItem('usuario',JSON.stringify(usuario)); // Primera vez que guardamos el usuario que viene de Google
+        }
+
     } catch (error) {
         console.log(error);
         dispatch({
@@ -83,4 +107,33 @@ export const cerrarSesionAccion = () => (dispatch) => {
     dispatch({
         type: CERRAR_SESION
     })
+}
+
+// Interaccón con la bbdd
+export const actualizarUsuarioAccion = (nombreActualizado) => async (dispatch, getState) => {
+    dispatch({
+        type : LOADING
+    })
+
+    const {user} = getState().usuario;
+
+    try {
+        await db.collection('usuarios').doc(user.email).update({
+            displayName : nombreActualizado
+        })
+        
+        const usuarioEditado = {
+            ...user,
+            displayName : nombreActualizado
+        }
+
+        dispatch({
+            type : USUARIO_EXITO,
+            payload : usuarioEditado
+        })
+
+        localStorage.setItem('usuario', JSON.stringify(usuarioEditado))
+    } catch (error) {
+        console.log(error);    
+    }
 }

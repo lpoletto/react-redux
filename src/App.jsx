@@ -9,6 +9,7 @@ import {
 import Login from './Components/Login';
 import Navbar from './Components/Navbar';
 import {auth } from './firebase';
+import Perfil from './Components/Perfil';
 
 
 function App() {
@@ -57,6 +58,7 @@ function App() {
           
           <Switch>
             <RutaProtegida component={Pokemones} path="/" exact />
+            <RutaProtegida component={Perfil} path="/perfil" exact />
             <Route component={Login} path="/login" exact />
           </Switch>
         </div>
